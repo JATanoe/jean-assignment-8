@@ -20,16 +20,16 @@ public class Task {
 		ExecutorService ioBoundTask = Executors.newCachedThreadPool();
 
 		for (int i = 0; i < 1000; i++) {
-			CompletableFuture.supplyAsync(() -> new Assignment8(), ioBoundTask)
+			CompletableFuture.supplyAsync(() -> new Assignment8(), cpuBoundTask)
 					.thenApplyAsync(task -> task.getNumbers(), cpuBoundTask)
 					.thenApplyAsync(list -> list.stream()
 									.collect(Collectors.groupingBy(n -> n, Collectors.counting())),
-							ioBoundTask)
+							cpuBoundTask)
 					.thenAcceptAsync(numbersMap -> numbersMap
 									.entrySet().stream()
 									.sorted(Map.Entry.comparingByKey())
 									.forEach(entry -> System.out.println(entry.getKey() + "=" + entry.getValue())),
-							ioBoundTask);
+							cpuBoundTask);
 		}
 
 	}
