@@ -1,5 +1,6 @@
 package com.coderscampus.task;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -12,8 +13,6 @@ import com.coderscampus.assignment.Assignment8;
 
 public class Task {
 
-	ConcurrentHashMap<Integer, Integer> frequencyMap = new ConcurrentHashMap<>();
-
 	public void getData() {
 
 		ExecutorService cpuBoundTask = Executors.newSingleThreadExecutor();
@@ -21,17 +20,19 @@ public class Task {
 
 		for (int i = 0; i < 1000; i++) {
 			CompletableFuture.supplyAsync(() -> new Assignment8(), cpuBoundTask)
-					.thenApplyAsync(task -> task.getNumbers(), cpuBoundTask)
-					.thenApplyAsync(list -> list.stream()
-									.collect(Collectors.groupingBy(n -> n, Collectors.counting())),
-							cpuBoundTask)
-					.thenAcceptAsync(numbersMap -> numbersMap
-									.entrySet().stream()
-									.sorted(Map.Entry.comparingByKey())
-									.forEach(entry -> System.out.println(entry.getKey() + "=" + entry.getValue())),
-							cpuBoundTask);
+					.thenApplyAsync(task -> task.getNumbers(), ioBoundTask)
+					.thenApplyAsync(taskList -> taskList.stream()
+							.collect(Collectors.groupingBy(n -> n, Collectors.counting())),
+							ioBoundTask)
+					.thenApplyAsync(numbersMap -> numbersMap.entrySet()
+							.stream()
+							.sorted(Map.Entry.comparingByKey())
+							.map(entry -> entry.getKey() + "=" + entry.getValue())
+							.collect(Collectors.joining(", ")),
+							ioBoundTask)
+					.thenAcceptAsync(System.out::println, cpuBoundTask);
 		}
-
+		
 	}
 
 }
