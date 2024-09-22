@@ -5,6 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -12,6 +16,9 @@ import java.util.stream.IntStream;
 public class Assignment8 {
 	private List<Integer> numbers = null;
 	private AtomicInteger i = new AtomicInteger(0);
+	
+	private List<CompletableFuture<List<Integer>>> futures = new ArrayList<>();
+	private ExecutorService executor = Executors.newCachedThreadPool();
 
 	public Assignment8() {
 		try {
@@ -53,6 +60,25 @@ public class Assignment8 {
 		});
 		System.out.println("Done Fetching records " + start + " to " + (end));
 		return newList;
+	}
+
+	public void getData() {
+		for (int i = 0; i < 1000; i++) {
+            CompletableFuture<List<Integer>> future = CompletableFuture.supplyAsync(() -> getNumbers(), executor);
+            futures.add(future);
+		}
+	}
+	
+	public void countAndPrint() {
+		System.out.println(
+	        futures.stream()
+	        .map(CompletableFuture::join)           
+	        .flatMap(List::stream)                  
+	        .collect(Collectors.groupingBy(n -> n, Collectors.counting())) 
+	        .entrySet().stream().sorted(Map.Entry.comparingByKey())
+	        .map(entry -> entry.getKey() + "=" + entry.getValue())
+	        .collect(Collectors.joining(", "))
+        );
 	}
 
 }

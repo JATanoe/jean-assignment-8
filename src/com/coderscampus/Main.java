@@ -1,13 +1,14 @@
 package com.coderscampus;
 
-import com.coderscampus.task.Task;
+import com.coderscampus.assignment.Assignment8;
 
 public class Main {
 
 	public static void main(String[] args) {
 		
-		Task task = new Task();
-		task.getData();
+        Assignment8 assignment = new Assignment8();
+        assignment.getData();
+        assignment.countAndPrint();
 
 	}
 
