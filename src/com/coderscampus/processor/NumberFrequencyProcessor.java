@@ -1,4 +1,4 @@
-package com.coderscampus.assignment;
+package com.coderscampus.processor;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,14 +13,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Assignment8 {
+public class NumberFrequencyProcessor {
 	private List<Integer> numbers = null;
 	private AtomicInteger i = new AtomicInteger(0);
-	
+
 	private List<CompletableFuture<List<Integer>>> futures = new ArrayList<>();
 	private ExecutorService executor = Executors.newCachedThreadPool();
 
-	public Assignment8() {
+	public NumberFrequencyProcessor() {
 		try {
 			// Make sure you download the output.txt file for Assignment 8
 			// and place the file in the root of your Java project
@@ -68,7 +68,7 @@ public class Assignment8 {
             futures.add(future);
 		}
 	}
-	
+
 	public void countAndPrint() {
 		System.out.println(
 	        futures.stream()
